@@ -23,6 +23,13 @@ def parse_input_file(input_file):
     else:
         o = []
     
+    # Create relation to component mapping separately
+    rel_to_comp = {}
+    for idx, rel in enumerate(r):
+        match = re.match(r"^(\w+):", rel)
+        if match:
+            rel_to_comp[idx] = match.group(1)
+    
     return {
         "title": title,
         "x": x,
@@ -30,14 +37,14 @@ def parse_input_file(input_file):
         "z": z,
         "r": r,
         "o": o
-    }
+    }, rel_to_comp
 
 def convert_to_fdt_format(parsed_data):
     fdt_format = {
         "type": "Symbolic",
-        "x": parsed_data["x"],
+        "x": [x for x in parsed_data["x"] if x not in parsed_data["z"]],
         "f": [f"f_{fault}" for fault in parsed_data["f"]],
-        "z": [f"u_{var}" for var in parsed_data["z"]],
+        "z": parsed_data["z"],
         "rels": []
     }
     
@@ -50,27 +57,31 @@ def convert_to_fdt_format(parsed_data):
             equation = rel.replace("=", "-")
         fdt_format["rels"].append(equation.strip().replace(",", ""))
     
-    for var in parsed_data["z"]:
-        fdt_format["rels"].append(f"-{var} + u_{var}")
-    
     return fdt_format
 
 def write_output_file(output_file, fdt_format):
     with open(output_file, 'w') as file:
         json.dump(fdt_format, file, indent=4)
 
+def write_relation_mapping(output_file, rel_to_comp):
+    with open(output_file, 'w') as file:
+        json.dump(rel_to_comp, file, indent=4)
+
 def main():
-    input_folder = '/home/ania/LLM_and_diagnosisv2/examples/logic'
-    output_folder = '/home/ania/LLM_and_diagnosisv2/examples/fdt'
+    input_folder = 'examples/logic_and_arithmetic'
+    output_folder = 'examples/fdt'
+    maps_output_folder = 'examples/rel_comp_maps'
     
     for filename in os.listdir(input_folder):
         if filename.endswith('.txt'):
             input_file = os.path.join(input_folder, filename)
             output_file = os.path.join(output_folder, f"model_definition_{filename.split('_')[-1].split('.')[0]}.json")
-            
-            parsed_data = parse_input_file(input_file)
+            maps_file = os.path.join(maps_output_folder, f"rel_comp_map_{filename.split('_')[-1].split('.')[0]}.json")
+            parsed_data, rel_to_comp = parse_input_file(input_file)
             fdt_format = convert_to_fdt_format(parsed_data)
+            
             write_output_file(output_file, fdt_format)
+            write_relation_mapping(maps_file, rel_to_comp)
 
 if __name__ == "__main__":
     main()

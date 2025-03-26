@@ -3,8 +3,9 @@ import sympy as sym
 import json
 import os
 
-input_folder = '/home/ania/LLM_and_diagnosisv2/examples/fdt'
-output_folder = '/home/ania/LLM_and_diagnosisv2/examples/msos'
+input_folder = 'examples/fdt'
+output_folder = 'examples/msos'
+
 
 if not os.path.exists(output_folder):
     os.makedirs(output_folder)
