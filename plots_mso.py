@@ -12,15 +12,22 @@ def string_to_sets(mso_string):
         return set()
     return {frozenset(s.split(', ')) for s in mso_string.split('\n')}
 
-def calculate_metrics(true_mso, pred_mso):
-    """Calculate TP, FP, FN, precision, recall, and F1 for a pair of MSOs"""
-    true_sets = string_to_sets(true_mso)
-    pred_sets = string_to_sets(pred_mso)
+def calculate_metrics(true_str, pred_str):
+    """Calculate metrics between true and predicted sets"""
+    # Convert strings to sets
+    true_set = set(true_str.split(',')) if true_str else set()
+    pred_set = set(pred_str.split(',')) if pred_str else set()
     
-    tp = len(true_sets & pred_sets)
-    fp = len(pred_sets - true_sets)
-    fn = len(true_sets - pred_sets)
+    # Remove empty strings
+    true_set = {x.strip() for x in true_set if x.strip()}
+    pred_set = {x.strip() for x in pred_set if x.strip()}
     
+    # Calculate metrics
+    tp = len(true_set.intersection(pred_set))
+    fp = len(pred_set - true_set)
+    fn = len(true_set - pred_set)
+    
+    # Calculate precision, recall, and F1
     precision = tp / (tp + fp) if (tp + fp) > 0 else 0
     recall = tp / (tp + fn) if (tp + fn) > 0 else 0
     f1 = 2 * (precision * recall) / (precision + recall) if (precision + recall) > 0 else 0
@@ -51,195 +58,380 @@ def count_relations(example_content):
     except:
         return 0
 
-def process_dataframe(df):
+def process_dataframe(df, true_col, pred_col):
     """Process dataframe to calculate all metrics"""
     # Add relation count
     df['relation_count'] = df['Example content'].apply(count_relations)
     
-    # Process all Generated MSO columns
-    mso_columns = ['Generated MSO'] + [f'Generated MSO.{i}' for i in range(1, 10)]
+    # Find all prediction columns (base name and its variants with .1, .2, etc.)
+    pred_columns = [col for col in df.columns if col.startswith(pred_col) or col == pred_col]
     
-    for col in mso_columns:
-        if col in df.columns:
-            metrics = df.apply(
-                lambda row: calculate_metrics(row['MSO'], row[col]),
-                axis=1
-            )
-            
-            # Add new columns with metrics
-            prefix = col.replace('Generated MSO', 'MSO')
-            df[f'{prefix}_TP'] = metrics.apply(lambda x: x['TP'])
-            df[f'{prefix}_FP'] = metrics.apply(lambda x: x['FP'])
-            df[f'{prefix}_FN'] = metrics.apply(lambda x: x['FN'])
-            df[f'{prefix}_Precision'] = metrics.apply(lambda x: x['Precision'])
-            df[f'{prefix}_Recall'] = metrics.apply(lambda x: x['Recall'])
-            df[f'{prefix}_F1'] = metrics.apply(lambda x: x['F1'])
+    # Calculate metrics for each prediction column
+    for i, pred_col_name in enumerate(pred_columns):
+        metrics = df.apply(
+            lambda row: calculate_metrics(
+                str(row[true_col]) if pd.notna(row[true_col]) else "",
+                str(row[pred_col_name]) if pd.notna(row[pred_col_name]) else ""
+            ),
+            axis=1
+        )
+        
+        suffix = f"_{i}" if i > 0 else ""
+        df[f'TP{suffix}'] = metrics.apply(lambda x: x['TP'])
+        df[f'FP{suffix}'] = metrics.apply(lambda x: x['FP'])
+        df[f'FN{suffix}'] = metrics.apply(lambda x: x['FN'])
+        df[f'Precision{suffix}'] = metrics.apply(lambda x: x['Precision'])
+        df[f'Recall{suffix}'] = metrics.apply(lambda x: x['Recall'])
+        df[f'F1{suffix}'] = metrics.apply(lambda x: x['F1'])
     
     return df
 
-def plot_metrics(df, title, save_path=None):
-    """Create plot for a single dataset and optionally save it"""
-    # Get F1 columns
-    f1_columns = [col for col in df.columns if col.endswith('_F1')]
+def process_metrics_stats(df, f1_columns):
+    """Helper function to process metrics based on number of versions"""
+    grouped = df.groupby('relation_count')
     
-    # For datasets with only one MSO version, std will be 0
-    f1_means = df[f1_columns].mean(axis=1) if len(f1_columns) > 1 else df[f1_columns[0]]
-    f1_stds = df[f1_columns].std(axis=1) if len(f1_columns) > 1 else pd.Series(0, index=df.index)
+    if len(f1_columns) == 1:
+        # For single version (o1), just use the values directly
+        f1_means = grouped[f1_columns[0]].mean()
+        f1_stds = grouped[f1_columns[0]].std().fillna(0)  # Fill NaN with 0 for single values
+    else:
+        # For multiple versions, compute stats across all versions
+        grouped_stats = grouped.agg({
+            col: ['mean', 'std'] for col in f1_columns
+        })
+        f1_means = grouped_stats[f1_columns].xs('mean', axis=1, level=1).mean(axis=1)
+        f1_stds = grouped_stats[f1_columns].xs('std', axis=1, level=1).mean(axis=1)
     
-    # Sort by relation count
-    sort_idx = df['relation_count'].argsort()
-    sorted_means = f1_means.iloc[sort_idx]
-    sorted_stds = f1_stds.iloc[sort_idx]
-    sorted_relations = df['relation_count'].iloc[sort_idx]
-    sorted_names = df['Example name'].iloc[sort_idx]
+    return f1_means, f1_stds
+
+def plot_metrics(df, title, save_path):
+    """Create a plot showing metrics by example complexity with improved aesthetics"""
+    plt.figure(figsize=(12, 8))
+    sns.set_style("whitegrid")
     
-    # Create plot
-    plt.figure(figsize=(8, 5))
-    ax1 = plt.gca()
+    # Get all F1 columns
+    f1_columns = [col for col in df.columns if 'F1' in col]
+    f1_means, f1_stds = process_metrics_stats(df, f1_columns)
     
-    # Plot F1 scores
-    line1 = ax1.plot(range(len(sorted_means)), sorted_means, 'bo-',
-                     linewidth=2, markersize=6, label='F1 Score')
+    # Create the scatter plot with error bars
+    plt.errorbar(f1_means.index, f1_means, yerr=f1_stds,
+                fmt='o', capsize=3, capthick=1.5,
+                ecolor='gray', markersize=8,
+                color='#2E86C1',  # Nice blue color
+                alpha=0.7,
+                elinewidth=1.5,
+                markeredgecolor='white',
+                markeredgewidth=1.5)
     
-    # Add standard deviation only if there are multiple versions
-    if len(f1_columns) > 1:
-        fill = ax1.fill_between(range(len(sorted_means)),
-                               sorted_means - sorted_stds,
-                               sorted_means + sorted_stds,
-                               alpha=0.2, color='blue', label='±1 std dev')
+    # Add trend line
+    z = np.polyfit(f1_means.index, f1_means, 1)
+    p = np.poly1d(z)
+    x_new = np.linspace(f1_means.index.min(), f1_means.index.max(), 100)
+    y_new = p(x_new)
+    plt.plot(x_new, y_new, color='#E74C3C', linestyle='--', 
+             alpha=0.8, linewidth=2, label='Trend')
     
-    # Add relation counts
-    ax2 = ax1.twinx()
-    line2 = ax2.plot(range(len(sorted_relations)), sorted_relations, 'r--',
-                     alpha=0.5, label='Number of Relations')
+    # Customize the plot
+    plt.xlabel('Number of Relations', fontsize=12, fontweight='bold')
+    plt.ylabel('F1 Score', fontsize=12, fontweight='bold')
+    plt.title(title, fontsize=14, fontweight='bold', pad=20)
     
-    # Customize plot
-    ax1.set_xlabel('Examples (sorted by number of relations)')
-    ax1.set_ylabel('F1 Score')
-    ax2.set_ylabel('Number of Relations', color='red')
-    ax2.tick_params(axis='y', labelcolor='red')
+    # Customize grid
+    plt.grid(True, linestyle='--', alpha=0.7)
     
-    ax1.set_ylim(max(0, sorted_means.min() - 0.1), 1.1)
-    plt.title(title)
+    # Set axis limits with some padding
+    plt.ylim(-0.1, 1.2)
+    plt.xlim(f1_means.index.min() - 0.5, f1_means.index.max() + 0.5)
     
-    # Add x-tick labels
-    ax1.set_xticks(range(len(sorted_means)))
-    ax1.set_xticklabels(sorted_names, rotation=90, ha='center', fontsize=8)
+    # Customize ticks
+    plt.xticks(f1_means.index, fontsize=10)
+    plt.yticks(fontsize=10)
     
     # Add legend
-    if len(f1_columns) > 1:
-        lines = line1 + [fill] + line2
-        labels = ['F1 Score', '±1 std dev', 'Number of Relations']
+    plt.legend(fontsize=10)
+    
+    # Tight layout
+    plt.tight_layout()
+    
+    # Save the plot with high DPI
+    plt.savefig(save_path, dpi=300, bbox_inches='tight')
+    plt.close()
+
+def plot_aggregated_metrics(dfs, save_path):
+    """Create an aggregated plot comparing different versions with improved aesthetics"""
+    plt.figure(figsize=(14, 8))
+    sns.set_style("whitegrid")
+    
+    colors = ['#2E86C1', '#28B463', '#E74C3C']  # Blue, Green, Red
+    markers = ['o', 's', 'D']  # Circle, Square, Diamond
+    
+    for (name, df), color, marker in zip(dfs.items(), colors, markers):
+        # Get all F1 columns
+        f1_columns = [col for col in df.columns if 'F1' in col]
+        f1_means, f1_stds = process_metrics_stats(df, f1_columns)
+        
+        # Scatter plot with error bars
+        plt.errorbar(f1_means.index, f1_means, yerr=f1_stds,
+                    label=name, color=color, marker=marker,
+                    fmt='o', capsize=3, capthick=1.5,
+                    alpha=0.7, markersize=8,
+                    elinewidth=1.5,
+                    markeredgecolor='white',
+                    markeredgewidth=1.5)
+        
+        # Trend line
+        z = np.polyfit(f1_means.index, f1_means, 1)
+        p = np.poly1d(z)
+        x_new = np.linspace(f1_means.index.min(), f1_means.index.max(), 100)
+        plt.plot(x_new, p(x_new), 
+                color=color, linestyle='--', alpha=0.5,
+                linewidth=2)
+    
+    # Customize the plot
+    plt.xlabel('Number of Relations', fontsize=12, fontweight='bold')
+    plt.ylabel('F1 Score', fontsize=12, fontweight='bold')
+    plt.title('Comparison of F1 Scores Across Versions', 
+              fontsize=14, fontweight='bold', pad=20)
+    
+    # Customize grid
+    plt.grid(True, linestyle='--', alpha=0.7)
+    
+    # Set axis limits
+    plt.ylim(-0.1, 1.2)
+    
+    # Customize ticks
+    plt.xticks(fontsize=10)
+    plt.yticks(fontsize=10)
+    
+    # Add legend with better positioning
+    plt.legend(fontsize=10, loc='upper center', 
+              bbox_to_anchor=(0.5, -0.15),
+              ncol=3, frameon=True)
+    
+    # Tight layout
+    plt.tight_layout()
+    
+    # Save the plot with high DPI
+    plt.savefig(save_path, dpi=300, bbox_inches='tight')
+    plt.close()
+
+def count_solutions(solution_str):
+    """Count number of solutions in a comma-separated string"""
+    if pd.isna(solution_str) or not solution_str:
+        return 0
+    return len([s for s in str(solution_str).split(',') if s.strip()])
+
+def process_metrics_stats_by_solutions(df, f1_columns, true_col):
+    """Helper function to process metrics based on solution count"""
+    # Compute number of solutions
+    df['solution_count'] = df[true_col].apply(count_solutions)
+    
+    # Group by solution count
+    grouped = df.groupby('solution_count')
+    
+    if len(f1_columns) == 1:
+        # For single version, just use the values directly
+        f1_means = grouped[f1_columns[0]].mean()
+        f1_stds = grouped[f1_columns[0]].std().fillna(0)
     else:
-        lines = line1 + line2
-        labels = ['F1 Score', 'Number of Relations']
-    ax1.legend(lines, labels, loc='upper left')
+        # For multiple versions, compute stats across all versions
+        grouped_stats = grouped.agg({
+            col: ['mean', 'std'] for col in f1_columns
+        })
+        f1_means = grouped_stats[f1_columns].xs('mean', axis=1, level=1).mean(axis=1)
+        f1_stds = grouped_stats[f1_columns].xs('std', axis=1, level=1).mean(axis=1)
+    
+    return f1_means, f1_stds
+
+def plot_metrics_by_solutions(df, title, save_path, true_col):
+    """Create a plot showing metrics sorted by number of solutions"""
+    plt.figure(figsize=(12, 8))
+    sns.set_style("whitegrid")
+    
+    # Get all F1 columns
+    f1_columns = [col for col in df.columns if 'F1' in col]
+    f1_means, f1_stds = process_metrics_stats_by_solutions(df, f1_columns, true_col)
+    
+    # Create the scatter plot with error bars
+    plt.errorbar(f1_means.index, f1_means, yerr=f1_stds,
+                fmt='o', capsize=3, capthick=1.5,
+                ecolor='gray', markersize=8,
+                color='#2E86C1',
+                alpha=0.7,
+                elinewidth=1.5,
+                markeredgecolor='white',
+                markeredgewidth=1.5)
+    
+    # Add trend line
+    z = np.polyfit(f1_means.index, f1_means, 1)
+    p = np.poly1d(z)
+    x_new = np.linspace(f1_means.index.min(), f1_means.index.max(), 100)
+    y_new = p(x_new)
+    plt.plot(x_new, y_new, color='#E74C3C', linestyle='--', 
+             alpha=0.8, linewidth=2, label='Trend')
+    
+    # Customize the plot
+    plt.xlabel('Number of Solutions', fontsize=12, fontweight='bold')
+    plt.ylabel('F1 Score', fontsize=12, fontweight='bold')
+    plt.title(title, fontsize=14, fontweight='bold', pad=20)
+    
+    # Customize grid
+    plt.grid(True, linestyle='--', alpha=0.7)
+    
+    # Set axis limits with some padding
+    plt.ylim(-0.1, 1.2)
+    plt.xlim(f1_means.index.min() - 0.5, f1_means.index.max() + 0.5)
+    
+    # Customize ticks
+    plt.xticks(f1_means.index, fontsize=10)
+    plt.yticks(fontsize=10)
+    
+    # Add legend
+    plt.legend(fontsize=10)
+    
+    # Tight layout
+    plt.tight_layout()
+    
+    # Save the plot with high DPI
+    plt.savefig(save_path, dpi=300, bbox_inches='tight')
+    plt.close()
+
+def plot_aggregated_metrics_by_solutions(dfs, save_path, true_col):
+    """Create an aggregated plot comparing different versions, sorted by number of solutions"""
+    plt.figure(figsize=(14, 8))
+    sns.set_style("whitegrid")
+    
+    colors = ['#2E86C1', '#28B463', '#E74C3C']
+    markers = ['o', 's', 'D']
+    
+    for (name, df), color, marker in zip(dfs.items(), colors, markers):
+        f1_columns = [col for col in df.columns if 'F1' in col]
+        f1_means, f1_stds = process_metrics_stats_by_solutions(df, f1_columns, true_col)
+        
+        plt.errorbar(f1_means.index, f1_means, yerr=f1_stds,
+                    label=name, color=color, marker=marker,
+                    fmt='o', capsize=3, capthick=1.5,
+                    alpha=0.7, markersize=8,
+                    elinewidth=1.5,
+                    markeredgecolor='white',
+                    markeredgewidth=1.5)
+        
+        z = np.polyfit(f1_means.index, f1_means, 1)
+        p = np.poly1d(z)
+        x_new = np.linspace(f1_means.index.min(), f1_means.index.max(), 100)
+        plt.plot(x_new, p(x_new), 
+                color=color, linestyle='--', alpha=0.5,
+                linewidth=2)
+    
+    plt.xlabel('Number of Solutions', fontsize=12, fontweight='bold')
+    plt.ylabel('F1 Score', fontsize=12, fontweight='bold')
+    plt.title('Comparison of F1 Scores by Number of Solutions', 
+              fontsize=14, fontweight='bold', pad=20)
     
     plt.grid(True, linestyle='--', alpha=0.7)
+    plt.ylim(-0.1, 1.2)
+    
+    plt.xticks(fontsize=10)
+    plt.yticks(fontsize=10)
+    
+    plt.legend(fontsize=10, loc='upper center', 
+              bbox_to_anchor=(0.5, -0.15),
+              ncol=3, frameon=True)
+    
     plt.tight_layout()
-    
-    if save_path:
-        plt.savefig(save_path, format='pdf', bbox_inches='tight')
-    plt.show()
-
-def plot_aggregated_metrics(dfs, save_path=None):
-    """Create aggregated plot showing F1, Precision, and Recall for all datasets"""
-    plt.figure(figsize=(8, 5))
-    
-    # Position of bars
-    datasets = list(dfs.keys())
-    x = np.arange(len(datasets))
-    width = 0.25  # Width of bars
-    
-    # Collect metrics for each dataset
-    f1_means = []
-    f1_stds = []
-    precision_means = []
-    precision_stds = []
-    recall_means = []
-    recall_stds = []
-    
-    for df in dfs.values():
-        # Get metric columns
-        f1_cols = [col for col in df.columns if col.endswith('_F1')]
-        precision_cols = [col for col in df.columns if col.endswith('_Precision')]
-        recall_cols = [col for col in df.columns if col.endswith('_Recall')]
-        
-        # Calculate means and stds
-        f1_means.append(df[f1_cols].mean().mean())
-        f1_stds.append(df[f1_cols].mean().std())
-        precision_means.append(df[precision_cols].mean().mean())
-        precision_stds.append(df[precision_cols].mean().std())
-        recall_means.append(df[recall_cols].mean().mean())
-        recall_stds.append(df[recall_cols].mean().std())
-    
-    # Create bars
-    plt.bar(x - width, f1_means, width, label='F1', color='blue', 
-            yerr=f1_stds, capsize=5, alpha=0.7)
-    plt.bar(x, precision_means, width, label='Precision', color='green',
-            yerr=precision_stds, capsize=5, alpha=0.7)
-    plt.bar(x + width, recall_means, width, label='Recall', color='red',
-            yerr=recall_stds, capsize=5, alpha=0.7)
-    
-    # Customize plot
-    plt.xlabel('Models')
-    plt.ylabel('Score')
-    plt.title('MSO Generation - Comparison of Metrics Across Models')
-    plt.xticks(x, datasets)
-    plt.legend()
-    plt.grid(True, linestyle='--', alpha=0.3)
-    
-    # Add value labels on top of bars
-    def add_value_labels(x, values, stds):
-        for i, (v, s) in enumerate(zip(values, stds)):
-            plt.text(x[i], v + s + 0.02, f'{v:.2f}±{s:.2f}', 
-                    ha='center', va='bottom', rotation=0, fontsize=8)
-    
-    add_value_labels(x - width, f1_means, f1_stds)
-    add_value_labels(x, precision_means, precision_stds)
-    add_value_labels(x + width, recall_means, recall_stds)
-    
-    plt.ylim(0, 1.2)  # Set y-axis limit to accommodate labels
-    plt.tight_layout()
-    
-    if save_path:
-        plt.savefig(save_path, format='pdf', bbox_inches='tight')
-    plt.show()
+    plt.savefig(save_path, dpi=300, bbox_inches='tight')
+    plt.close()
 
 # Read and process all files
-files = ['results/Karol/results_article/4o_mini/MSO.xlsx',
-         'results/Karol/results_article/o1/MSO.xlsx',
-         'results/Karol/results_article/o3_mini/MSO.xlsx']
-names = ['4o_mini', 'o1', 'o3']
+base_path = 'results/Karol/results_article'
+versions = ['4o_mini', 'o1', 'o3_mini']
 
-dfs = {}
-for file, name in zip(files, names):
-    df = pd.read_excel(file, skiprows=2, usecols='B:BO')
-    df = df.drop(23)
-    dfs[name] = process_dataframe(df)
+# Configure file groups with correct column names
+file_groups = {
+    'mso': {
+        'files': [f'{base_path}/{ver}/MSO.xlsx' for ver in versions],
+        'names': [f'{ver}_mso' for ver in versions],
+        'true_col': 'MSO',
+        'pred_col': 'Generated MSO'
+    },
+    'diagnoses': {
+        'files': [f'{base_path}/{ver}/MINIMAL_DIAGNOSES.xlsx' for ver in versions],
+        'names': [f'{ver}_diagnoses' for ver in versions],
+        'true_col': 'Minimal Diagnoses',
+        'pred_col': 'Generated  Minimal Diagnoses'  # Note the double space
+    },
+    'conflicts': {
+        'files': [f'{base_path}/{ver}/MINIMAL_CONFLICTS.xlsx' for ver in versions],
+        'names': [f'{ver}_conflicts' for ver in versions],
+        'true_col': 'Minimal Conflicts',
+        'pred_col': 'Generated  Minimal Conflicts'  # Assuming similar pattern
+    }
+}
 
-# Create plots for each dataset
-for name, df in dfs.items():
-    plot_metrics(df, f'MSO Generation - F1 Scores by Example Complexity - {name}',
-                save_path=f'pic/mso_metrics_{name}.pdf')
+# Process each group separately
+group_dfs = {}
+for group_name, config in file_groups.items():
+    group_dfs[group_name] = {}
+    for file, name in zip(config['files'], config['names']):
+        df = pd.read_excel(file, skiprows=2, usecols='B:BO')
+        # Fill NaN values in 'Example content' with previous non-empty value
+        df['Example content'] = df['Example content'].ffill()
+        df = df.drop(df.index[-1])  # Drop last row from each file
+        print(df.columns)
+        print(file)
+        group_dfs[group_name][name] = process_dataframe(
+            df, 
+            config['true_col'],  # Pass the true column name
+            config['pred_col']   # Pass the predicted column name
+        )
 
-# Print summary statistics
-print("\nSummary Statistics:")
-print("-" * 50)
-for name, df in dfs.items():
-    f1_cols = [col for col in df.columns if col.endswith('_F1')]
-    mean_f1 = df[f1_cols].mean().mean()
-    std_f1 = df[f1_cols].mean().std()
+# Create plots for each group
+for group_name, dfs in group_dfs.items():
+    # Individual plots for each version in the group
+    for name, df in dfs.items():
+        plot_metrics(df, f'{group_name.upper()} - Metrics by Example Complexity - {name}',
+                    save_path=f'pic/metrics_{name}.pdf')
     
-    print(f"\nDataset: {name}")
-    print(f"Average F1 score: {mean_f1:.3f} ± {std_f1:.3f}")
-    print(f"Average number of relations: {df['relation_count'].mean():.1f}")
-    print(f"Correlation between F1 and relations: {df[f1_cols[0]].corr(df['relation_count']):.3f}")
+    # Aggregated plot for the group
+    plot_aggregated_metrics(dfs, save_path=f'pic/metrics_{group_name}_aggregated.pdf')
+    
+    # Print summary statistics for the group
+    print(f"\nSummary Statistics for {group_name.upper()}:")
+    print("-" * 50)
+    for name, df in dfs.items():
+        mean_f1 = df['F1'].mean()
+        std_f1 = df['F1'].std()
+        
+        print(f"\nVersion: {name}")
+        print(f"Average F1 score: {mean_f1:.3f} ± {std_f1:.3f}")
+        print(f"Average number of relations: {df['relation_count'].mean():.1f}")
+        print(f"Correlation between F1 and relations: {df['F1'].corr(df['relation_count']):.3f}")
 
-# %%
+# Update the solution columns dictionary to use true column names
+solution_columns = {
+    'mso': 'MSO',
+    'conflicts': 'Minimal Conflicts',
+    'diagnoses': 'Minimal Diagnoses'
+}
 
-# Create and save aggregated plot
-print("\nCreating aggregated metrics plot...")
-plot_aggregated_metrics(dfs, save_path='pic/mso_metrics_aggregated.pdf')
+# Create additional plots sorted by number of solutions
+for group_name, dfs in group_dfs.items():
+    true_col = solution_columns[group_name]
+    
+    # Individual plots for each version
+    for name, df in dfs.items():
+        plot_metrics_by_solutions(
+            df, 
+            f'{group_name.upper()} - Metrics by Number of Solutions - {name}',
+            f'pic/metrics_by_solutions_{name}.pdf',
+            true_col
+        )
+    
+    # Aggregated plot for the group
+    plot_aggregated_metrics_by_solutions(
+        dfs, 
+        f'pic/metrics_by_solutions_{group_name}_aggregated.pdf',
+        true_col
+    )
 
 # %%
