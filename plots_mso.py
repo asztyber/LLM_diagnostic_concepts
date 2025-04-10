@@ -31,8 +31,8 @@ def calculate_metrics(true_str, pred_str):
     fn = len(true_set - pred_set)
     
     # Calculate precision, recall, and F1
-    precision = tp / (tp + fp) if (tp + fp) > 0 else 0
-    recall = tp / (tp + fn) if (tp + fn) > 0 else 0
+    precision = tp / (tp + fp) if (tp + fp) > 0 else 1
+    recall = tp / (tp + fn) if (tp + fn) > 0 else 1
     f1 = 2 * (precision * recall) / (precision + recall) if (precision + recall) > 0 else 0
     
     return {
