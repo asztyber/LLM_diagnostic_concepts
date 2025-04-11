@@ -1,0 +1,69 @@
+Name: 10
+{"nMSO": 1, "MSO_1": ["eq0"]}
+
+Name: 11
+{"nMSO": 1, "MSO_1": ["eq0", "eq1", "eq2"]}
+
+Name: 12
+{"nMSO": 3, "MSO_1": ["eq0", "eq1", "eq3"], "MSO_2": ["eq1", "eq2", "eq4"], "MSO_3": ["eq0", "eq2", "eq3", "eq4"]}
+
+Name: 13
+{"nMSO": 4, "MSO_1": ["eq0", "eq1", "eq4", "eq6"], "MSO_2": ["eq0", "eq2", "eq3", "eq5"], "MSO_3": ["eq1", "eq2", "eq3", "eq5"], "MSO_4": ["eq2", "eq3", "eq5", "eq6"]}
+
+Name: 14
+{"nMSO": 4, "MSO_1": ["eq0", "eq1", "eq4", "eq6"], "MSO_2": ["eq0", "eq2", "eq3", "eq5"], "MSO_3": ["eq1", "eq2", "eq3", "eq5"], "MSO_4": ["eq2", "eq3", "eq5", "eq6"]}
+
+Name: 15
+{"nMSO": 2, "MSO_1": ["eq0", "eq1", "eq4", "eq6"], "MSO_2": ["eq2", "eq3", "eq5"]}
+
+Name: 16
+{"nMSO": 2, "MSO_1": ["eq0", "eq1", "eq3", "eq4", "eq6"], "MSO_2": ["eq1", "eq2", "eq4", "eq5", "eq7"]}
+
+Name: 17
+{"nMSO": 3, "MSO_1": ["eq4", "eq5"], "MSO_2": ["eq0", "eq1", "eq2", "eq3", "eq4"], "MSO_3": ["eq0", "eq1", "eq2", "eq3", "eq5"]}
+
+Name: 18
+{"nMSO": 2, "MSO_1": ["eq8", "eq9", "eq10"], "MSO_2": ["eq2", "eq3", "eq5", "eq7", "eq10"]}
+
+Name: 19
+{"nMSO": 1, "MSO_1": ["eq4", "eq5", "eq10", "eq11", "eq14"]}
+
+Name: 2
+{"nMSO": 3, "MSO_1": ["eq0", "eq1", "eq3"], "MSO_2": ["eq1", "eq2", "eq4"], "MSO_3": ["eq0", "eq2", "eq3", "eq4"]}
+
+Name: 20
+{"nMSO": 3, "MSO_1": ["eq0", "eq1", "eq3"], "MSO_2": ["eq1", "eq2", "eq4"], "MSO_3": ["eq0", "eq2", "eq3", "eq4"]}
+
+Name: 21
+{"nMSO": 3, "MSO_1": ["eq0", "eq1", "eq3"], "MSO_2": ["eq1", "eq2", "eq4"], "MSO_3": ["eq0", "eq2", "eq3", "eq4"]}
+
+Name: 22
+{"nMSO": 1, "MSO_1": ["eq0", "eq1", "eq2"]}
+
+Name: 23
+{"nMSO": 1, "MSO_1": ["eq0"]}
+
+Name: 24
+{"nMSO": 1, "MSO_1": ["eq0", "eq1", "eq2"]}
+
+Name: 3
+{"nMSO": 2, "MSO_1": ["eq0", "eq1", "eq4", "eq6"], "MSO_2": ["eq2", "eq3", "eq5"]}
+
+Name: 4
+{"nMSO": 2, "MSO_1": ["eq0", "eq1", "eq4", "eq6"], "MSO_2": ["eq2", "eq3", "eq5"]}
+
+Name: 5
+{"nMSO": 2, "MSO_1": ["eq0", "eq1", "eq4", "eq6"], "MSO_2": ["eq2", "eq3", "eq5"]}
+
+Name: 6
+{"nMSO": 2, "MSO_1": ["eq0", "eq1", "eq3", "eq4", "eq6"], "MSO_2": ["eq1", "eq2", "eq4", "eq5", "eq7"]}
+
+Name: 7
+{"nMSO": 1, "MSO_1": ["eq4", "eq5"]}
+
+Name: 8
+{"nMSO": 2, "MSO_1": ["eq8", "eq9", "eq10"], "MSO_2": ["eq2", "eq3", "eq5", "eq7", "eq10"]}
+
+Name: 9
+{"nMSO": 1, "MSO_1": ["eq4", "eq5", "eq10", "eq11", "eq14"]}
+

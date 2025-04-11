@@ -1,0 +1,69 @@
+Name: 10
+{"num_MSO": 1, "MSO_sets": {"MSO_1": ["eq0"]}}
+
+Name: 11
+{"num_MSO": 1, "MSO_sets": {"MSO_1": ["eq0", "eq1", "eq2"]}}
+
+Name: 12
+{"num_MSO": 3, "MSO_sets": {"MSO_1": ["eq0", "eq1", "eq3"], "MSO_2": ["eq1", "eq2", "eq4"], "MSO_3": ["eq0", "eq2", "eq3", "eq4"]}}
+
+Name: 13
+{"num_MSO": 2, "MSO_sets": {"MSO_1": ["eq2", "eq3", "eq5"], "MSO_2": ["eq0", "eq1", "eq4", "eq6"]}}
+
+Name: 14
+{"num_MSO": 3, "MSO_sets": {"MSO_1": ["eq2", "eq3", "eq5"], "MSO_2": ["eq0", "eq1", "eq4", "eq6"], "MSO_3": ["eq2", "eq3", "eq5", "eq6"]}}
+
+Name: 15
+{"num_MSO": 2, "MSO_sets": {"MSO_1": ["eq2", "eq3", "eq5"], "MSO_2": ["eq0", "eq1", "eq4", "eq6"]}}
+
+Name: 16
+{"num_MSO": 2, "MSO_sets": {"MSO_1": ["eq0", "eq1", "eq3", "eq4", "eq6"], "MSO_2": ["eq1", "eq2", "eq4", "eq5", "eq7"]}}
+
+Name: 17
+{"num_MSO": 1, "MSO_sets": {"MSO_1": ["eq4", "eq5"]}}
+
+Name: 18
+{"num_MSO": 3, "MSO_sets": {"MSO_1": ["eq8", "eq9", "eq10"], "MSO_2": ["eq0", "eq1", "eq4", "eq6", "eq8"], "MSO_3": ["eq2", "eq3", "eq5", "eq7", "eq10"]}}
+
+Name: 19
+{"num_MSO": 2, "MSO_sets": {"MSO_1": ["eq4", "eq5", "eq10", "eq11", "eq14"], "MSO_2": ["eq0", "eq1", "eq6", "eq7", "eq12"]}}
+
+Name: 2
+{"num_MSO": 2, "MSO_sets": {"MSO_1": ["eq0", "eq1", "eq3"], "MSO_2": ["eq1", "eq2", "eq4"]}}
+
+Name: 20
+{"num_MSO": 2, "MSO_sets": {"MSO_1": ["eq0", "eq1", "eq3"], "MSO_2": ["eq1", "eq2", "eq4"]}}
+
+Name: 21
+{"num_MSO": 2, "MSO_sets": {"MSO_1": ["eq0", "eq1", "eq3"], "MSO_2": ["eq1", "eq2", "eq4"]}}
+
+Name: 22
+{"num_MSO": 1, "MSO_sets": {"MSO_1": ["eq0", "eq1", "eq2"]}}
+
+Name: 23
+{"num_MSO": 1, "MSO_sets": {"MSO_1": ["eq0"]}}
+
+Name: 24
+{"num_MSO": 1, "MSO_sets": {"MSO_1": ["eq0", "eq1", "eq2"]}}
+
+Name: 3
+{"num_MSO": 2, "MSO_sets": {"MSO_1": ["eq2", "eq3", "eq5"], "MSO_2": ["eq0", "eq1", "eq4", "eq6"]}}
+
+Name: 4
+{"num_MSO": 2, "MSO_sets": {"MSO_1": ["eq2", "eq3", "eq5"], "MSO_2": ["eq0", "eq1", "eq4", "eq6"]}}
+
+Name: 5
+{"num_MSO": 2, "MSO_sets": {"MSO_1": ["eq2", "eq3", "eq5"], "MSO_2": ["eq0", "eq1", "eq4", "eq6"]}}
+
+Name: 6
+{"num_MSO": 2, "MSO_sets": {"MSO_1": ["eq0", "eq1", "eq3", "eq4", "eq6"], "MSO_2": ["eq1", "eq2", "eq4", "eq5", "eq7"]}}
+
+Name: 7
+{"num_MSO": 1, "MSO_sets": {"MSO_1": ["eq4", "eq5"]}}
+
+Name: 8
+{"num_MSO": 3, "MSO_sets": {"MSO_1": ["eq8", "eq9", "eq10"], "MSO_2": ["eq0", "eq1", "eq4", "eq6", "eq8"], "MSO_3": ["eq2", "eq3", "eq5", "eq7", "eq10"]}}
+
+Name: 9
+{"num_MSO": 2, "MSO_sets": {"MSO_1": ["eq4", "eq5", "eq10", "eq11", "eq14"], "MSO_2": ["eq0", "eq1", "eq6", "eq7", "eq12"]}}
+

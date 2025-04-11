@@ -1,0 +1,69 @@
+Name: 10
+{"MSO_set_1": ["eq0"], "number_MSOs": 1}
+
+Name: 11
+{"MSO_set_1": ["eq0", "eq1", "eq2"], "number_MSOs": 1}
+
+Name: 12
+{"MSO_set_1": ["eq0", "eq1", "eq3"], "MSO_set_2": ["eq1", "eq2", "eq4"], "MSO_set_3": ["eq0", "eq2", "eq3", "eq4"], "number_MSOs": 3}
+
+Name: 13
+{"MSO_set_1": ["eq0", "eq1", "eq4", "eq6"], "MSO_set_2": ["eq2", "eq3", "eq5"], "number_MSOs": 2}
+
+Name: 14
+{"MSO_set_1": ["eq0", "eq1", "eq4", "eq6"], "MSO_set_2": ["eq2", "eq3", "eq5"], "number_MSOs": 2}
+
+Name: 15
+{"MSO_set_1": ["eq0", "eq1", "eq4", "eq6"], "MSO_set_2": ["eq2", "eq3", "eq5"], "number_MSOs": 2}
+
+Name: 16
+{"MSO_set_1": ["eq0", "eq1", "eq3", "eq4", "eq6"], "MSO_set_2": ["eq1", "eq2", "eq4", "eq5", "eq7"], "number_MSOs": 2}
+
+Name: 17
+{"MSO_set_1": ["eq4", "eq5"], "MSO_set_2": ["eq0", "eq1", "eq2", "eq3", "eq4"], "MSO_set_3": ["eq0", "eq1", "eq2", "eq3", "eq5"], "number_MSOs": 3}
+
+Name: 18
+{"MSO_set_1": ["eq0", "eq1", "eq4", "eq6", "eq8"], "MSO_set_2": ["eq2", "eq3", "eq5", "eq7", "eq10"], "number_MSOs": 2}
+
+Name: 19
+{"MSO_set_1": ["eq0", "eq1", "eq2", "eq6", "eq7", "eq8", "eq12"], "MSO_set_2": ["eq3", "eq4", "eq5", "eq9", "eq10", "eq11", "eq13", "eq14"], "number_MSOs": 2}
+
+Name: 2
+{"MSO_set_1": ["eq0", "eq1", "eq3"], "MSO_set_2": ["eq1", "eq2", "eq4"], "number_MSOs": 2}
+
+Name: 20
+{"MSO_set_1": ["eq0", "eq1", "eq3"], "MSO_set_2": ["eq1", "eq2", "eq4"], "number_MSOs": 2}
+
+Name: 21
+{"MSO_set_1": ["eq0", "eq1", "eq3"], "MSO_set_2": ["eq1", "eq2", "eq4"], "number_MSOs": 2}
+
+Name: 22
+{"MSO_set_1": ["eq0", "eq1", "eq2"], "number_MSOs": 1}
+
+Name: 23
+{"MSO_set_1": ["eq0"], "number_MSOs": 1}
+
+Name: 24
+{"MSO_set_1": ["eq0", "eq1", "eq2"], "number_MSOs": 1}
+
+Name: 3
+{"MSO_set_1": ["eq0", "eq1", "eq4", "eq6"], "MSO_set_2": ["eq2", "eq3", "eq5"], "number_MSOs": 2}
+
+Name: 4
+{"MSO_set_1": ["eq0", "eq1", "eq4", "eq6"], "MSO_set_2": ["eq2", "eq3", "eq5"], "number_MSOs": 2}
+
+Name: 5
+{"MSO_set_1": ["eq0", "eq1", "eq4", "eq6"], "MSO_set_2": ["eq2", "eq3", "eq5"], "number_MSOs": 2}
+
+Name: 6
+{"MSO_set_1": ["eq0", "eq1", "eq3", "eq4", "eq6"], "MSO_set_2": ["eq1", "eq2", "eq4", "eq5", "eq7"], "number_MSOs": 2}
+
+Name: 7
+{"MSO_set_1": ["eq4", "eq5"], "MSO_set_2": ["eq0", "eq1", "eq2", "eq3", "eq4"], "MSO_set_3": ["eq0", "eq1", "eq2", "eq3", "eq5"], "number_MSOs": 3}
+
+Name: 8
+{"MSO_set_1": ["eq0", "eq1", "eq4", "eq6", "eq8"], "MSO_set_2": ["eq2", "eq3", "eq5", "eq7", "eq10"], "number_MSOs": 2}
+
+Name: 9
+{"MSO_set_1": ["eq0", "eq1", "eq2", "eq6", "eq7", "eq8", "eq12"], "MSO_set_2": ["eq3", "eq4", "eq5", "eq9", "eq10", "eq11", "eq13", "eq14"], "number_MSOs": 2}
+

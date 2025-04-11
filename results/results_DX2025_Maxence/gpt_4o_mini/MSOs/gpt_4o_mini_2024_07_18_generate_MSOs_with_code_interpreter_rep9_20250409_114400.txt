@@ -1,0 +1,286 @@
+Name: 10
+{
+    "MSO_sets": {},
+    "count": 0
+}
+
+Name: 11
+{
+    "MSO_sets": {},
+    "count": 0
+}
+
+Name: 12
+{
+    "MSO_sets": {
+        "set1": ["eq0", "eq1", "eq3"],
+        "set2": ["eq0", "eq2", "eq4"],
+        "set3": ["eq1", "eq2", "eq4"]
+    },
+    "count": 3
+}
+
+Name: 13
+{
+    "MSO_sets": {
+        "set1": ["eq0", "eq1", "eq4"],
+        "set2": ["eq0", "eq2", "eq5"],
+        "set3": ["eq1", "eq2", "eq5"],
+        "set4": ["eq0", "eq1", "eq6"],
+        "set5": ["eq2", "eq3", "eq4"],
+        "set6": ["eq3", "eq4", "eq5"]
+    },
+    "count": 6
+}
+
+Name: 14
+{
+    "MSO_sets": {
+        "set1": ["eq0", "eq1", "eq4"],
+        "set2": ["eq0", "eq2", "eq5"],
+        "set3": ["eq1", "eq2", "eq5"],
+        "set4": ["eq0", "eq1", "eq6"],
+        "set5": ["eq2", "eq3", "eq4"],
+        "set6": ["eq3", "eq4", "eq5"]
+    },
+    "count": 6
+}
+
+Name: 15
+{
+    "MSO_sets": {
+        "set1": ["eq0", "eq1", "eq4"],
+        "set2": ["eq0", "eq2", "eq5"],
+        "set3": ["eq1", "eq2", "eq5"],
+        "set4": ["eq0", "eq1", "eq6"],
+        "set5": ["eq2", "eq3", "eq4"],
+        "set6": ["eq3", "eq4", "eq5"]
+    },
+    "count": 6
+}
+
+Name: 16
+{
+    "MSO_sets": {
+        "set1": ["eq0", "eq1", "eq3"],
+        "set2": ["eq0", "eq2", "eq5"],
+        "set3": ["eq1", "eq2", "eq5"],
+        "set4": ["eq3", "eq4", "eq7"],
+        "set5": ["eq4", "eq5", "eq6"]
+    },
+    "count": 5
+}
+
+Name: 17
+{
+    "MSO_sets": {
+        "set1": ["eq0", "eq1", "eq2"],
+        "set2": ["eq0", "eq3", "eq4"],
+        "set3": ["eq1", "eq3", "eq4"],
+        "set4": ["eq2", "eq3", "eq5"]
+    },
+    "count": 4
+}
+
+Name: 18
+{
+    "MSO_sets": {
+        "set1": ["eq0", "eq1", "eq6"],
+        "set2": ["eq0", "eq2", "eq7"],
+        "set3": ["eq0", "eq4", "eq9"],
+        "set4": ["eq1", "eq2", "eq7"],
+        "set5": ["eq1", "eq4", "eq9"],
+        "set6": ["eq2", "eq4", "eq6"],
+        "set7": ["eq3", "eq4", "eq6"],
+        "set8": ["eq3", "eq7", "eq9"],
+        "set9": ["eq4", "eq5", "eq9"],
+        "set10": ["eq5", "eq7", "eq10"]
+    },
+    "count": 10
+}
+
+Name: 19
+{
+    "MSO_sets": {
+        "set1": ["eq0", "eq1", "eq7"],
+        "set2": ["eq0", "eq2", "eq8"],
+        "set3": ["eq0", "eq3", "eq9"],
+        "set4": ["eq0", "eq4", "eq10"],
+        "set5": ["eq0", "eq5", "eq12"],
+        "set6": ["eq0", "eq6", "eq12"],
+        "set7": ["eq1", "eq2", "eq8"],
+        "set8": ["eq1", "eq3", "eq9"],
+        "set9": ["eq1", "eq4", "eq10"],
+        "set10": ["eq1", "eq5", "eq12"],
+        "set11": ["eq1", "eq6", "eq12"],
+        "set12": ["eq2", "eq3", "eq9"],
+        "set13": ["eq2", "eq4", "eq10"],
+        "set14": ["eq2", "eq5", "eq12"],
+        "set15": ["eq3", "eq4", "eq10"],
+        "set16": ["eq3", "eq5", "eq12"],
+        "set17": ["eq4", "eq5", "eq10"],
+        "set18": ["eq4", "eq6", "eq12"],
+        "set19": ["eq5", "eq6", "eq12"],
+        "set20": ["eq7", "eq8", "eq12"],
+        "set21": ["eq8", "eq9", "eq13"],
+        "set22": ["eq9", "eq10", "eq14"]
+    },
+    "count": 22
+}
+
+Name: 2
+{
+    "MSO_sets": {
+        "set1": ["eq0", "eq1", "eq3"],
+        "set2": ["eq0", "eq2", "eq4"],
+        "set3": ["eq1", "eq2", "eq4"]
+    },
+    "count": 3
+}
+
+Name: 20
+{
+    "MSO_sets": {
+        "set1": ["eq0", "eq1", "eq3"],
+        "set2": ["eq0", "eq2", "eq4"],
+        "set3": ["eq1", "eq2", "eq4"]
+    },
+    "count": 3
+}
+
+Name: 21
+{
+    "MSO_sets": {
+        "set1": ["eq0", "eq1", "eq3"],
+        "set2": ["eq0", "eq2", "eq4"],
+        "set3": ["eq1", "eq2", "eq4"]
+    },
+    "count": 3
+}
+
+Name: 22
+{
+    "MSO_sets": {},
+    "count": 0
+}
+
+Name: 23
+{
+    "MSO_sets": {},
+    "count": 0
+}
+
+Name: 24
+{
+    "MSO_sets": {},
+    "count": 0
+}
+
+Name: 3
+{
+    "MSO_sets": {
+        "set1": ["eq0", "eq1", "eq4"],
+        "set2": ["eq0", "eq2", "eq5"],
+        "set3": ["eq1", "eq2", "eq5"],
+        "set4": ["eq0", "eq1", "eq6"],
+        "set5": ["eq2", "eq3", "eq4"],
+        "set6": ["eq3", "eq4", "eq5"]
+    },
+    "count": 6
+}
+
+Name: 4
+{
+    "MSO_sets": {
+        "set1": ["eq0", "eq1", "eq4"],
+        "set2": ["eq0", "eq2", "eq5"],
+        "set3": ["eq1", "eq2", "eq5"],
+        "set4": ["eq0", "eq1", "eq6"],
+        "set5": ["eq2", "eq3", "eq4"],
+        "set6": ["eq3", "eq4", "eq5"]
+    },
+    "count": 6
+}
+
+Name: 5
+{
+    "MSO_sets": {
+        "set1": ["eq0", "eq1", "eq4"],
+        "set2": ["eq0", "eq2", "eq5"],
+        "set3": ["eq1", "eq2", "eq5"],
+        "set4": ["eq0", "eq1", "eq6"],
+        "set5": ["eq2", "eq3", "eq4"],
+        "set6": ["eq3", "eq4", "eq5"]
+    },
+    "count": 6
+}
+
+Name: 6
+{
+    "MSO_sets": {
+        "set1": ["eq0", "eq1", "eq3"],
+        "set2": ["eq0", "eq2", "eq5"],
+        "set3": ["eq1", "eq2", "eq5"],
+        "set4": ["eq3", "eq4", "eq7"],
+        "set5": ["eq4", "eq5", "eq6"]
+    },
+    "count": 5
+}
+
+Name: 7
+{
+    "MSO_sets": {
+        "set1": ["eq0", "eq1", "eq2"],
+        "set2": ["eq0", "eq3", "eq4"],
+        "set3": ["eq1", "eq3", "eq4"],
+        "set4": ["eq2", "eq3", "eq5"]
+    },
+    "count": 4
+}
+
+Name: 8
+{
+    "MSO_sets": {
+        "set1": ["eq0", "eq1", "eq6"],
+        "set2": ["eq0", "eq2", "eq7"],
+        "set3": ["eq0", "eq4", "eq9"],
+        "set4": ["eq1", "eq2", "eq7"],
+        "set5": ["eq1", "eq4", "eq9"],
+        "set6": ["eq2", "eq4", "eq6"],
+        "set7": ["eq3", "eq4", "eq6"],
+        "set8": ["eq3", "eq7", "eq9"],
+        "set9": ["eq4", "eq5", "eq9"],
+        "set10": ["eq5", "eq7", "eq10"]
+    },
+    "count": 10
+}
+
+Name: 9
+{
+    "MSO_sets": {
+        "set1": ["eq0", "eq1", "eq7"],
+        "set2": ["eq0", "eq2", "eq8"],
+        "set3": ["eq0", "eq3", "eq9"],
+        "set4": ["eq0", "eq4", "eq10"],
+        "set5": ["eq0", "eq5", "eq12"],
+        "set6": ["eq0", "eq6", "eq12"],
+        "set7": ["eq1", "eq2", "eq8"],
+        "set8": ["eq1", "eq3", "eq9"],
+        "set9": ["eq1", "eq4", "eq10"],
+        "set10": ["eq1", "eq5", "eq12"],
+        "set11": ["eq1", "eq6", "eq12"],
+        "set12": ["eq2", "eq3", "eq9"],
+        "set13": ["eq2", "eq4", "eq10"],
+        "set14": ["eq2", "eq5", "eq12"],
+        "set15": ["eq3", "eq4", "eq10"],
+        "set16": ["eq3", "eq5", "eq12"],
+        "set17": ["eq4", "eq5", "eq10"],
+        "set18": ["eq4", "eq6", "eq12"],
+        "set19": ["eq5", "eq6", "eq12"],
+        "set20": ["eq7", "eq8", "eq12"],
+        "set21": ["eq8", "eq9", "eq13"],
+        "set22": ["eq9", "eq10", "eq14"]
+    },
+    "count": 22
+}
+

@@ -1,0 +1,168 @@
+Name: 10
+{
+  "MSO0": ["eq0"],
+  "MSOcount": 1
+}
+
+Name: 11
+{
+  "MSO0": ["eq0", "eq1", "eq2"],
+  "MSOcount": 1
+}
+
+Name: 12
+{
+  "MSO0": ["eq0", "eq1", "eq3"],
+  "MSO1": ["eq1", "eq2", "eq4"],
+  "MSO2": ["eq0", "eq2", "eq3", "eq4"],
+  "MSOcount": 3
+}
+
+Name: 13
+{
+    "MSO0": ["eq2", "eq3", "eq5"],
+    "MSO1": ["eq0", "eq1", "eq4", "eq6"],
+    "MSOcount": 2
+}
+
+Name: 14
+{
+    "MSO0": ["eq2", "eq3", "eq5"],
+    "MSO1": ["eq0", "eq1", "eq4", "eq6"],
+    "MSOcount": 2
+}
+
+Name: 15
+{
+    "MSO0": ["eq2", "eq3", "eq5"],
+    "MSO1": ["eq0", "eq1", "eq4", "eq6"],
+    "MSOcount": 2
+}
+
+Name: 16
+{
+    "MSO0": ["eq0", "eq1", "eq3", "eq4", "eq6"],
+    "MSO1": ["eq1", "eq2", "eq4", "eq5", "eq7"],
+    "MSOcount": 2
+}
+
+Name: 17
+{
+    "MSO0": ["eq4", "eq5"],
+    "MSO1": ["eq0", "eq1", "eq2", "eq3", "eq4"],
+    "MSO2": ["eq0", "eq1", "eq2", "eq3", "eq5"],
+    "MSOcount": 3
+}
+
+Name: 18
+{
+    "MSO0": ["eq8", "eq9", "eq10"],
+    "MSO1": ["eq0", "eq1", "eq4", "eq6", "eq8"],
+    "MSO2": ["eq2", "eq3", "eq5", "eq7", "eq10"],
+    "MSOcount": 3
+}
+
+Name: 19
+{
+    "MSO0": ["eq0", "eq1", "eq6", "eq7", "eq12"],
+    "MSO1": ["eq4", "eq5", "eq10", "eq11", "eq14"],
+    "MSO2": ["eq1", "eq2", "eq3", "eq4", "eq8", "eq9", "eq13"],
+    "MSOcount": 3
+}
+
+Name: 2
+{
+    "MSO0": ["eq0", "eq1", "eq3"],
+    "MSO1": ["eq1", "eq2", "eq4"],
+    "MSO2": ["eq0", "eq1", "eq2", "eq3"],
+    "MSO3": ["eq0", "eq1", "eq2", "eq4"],
+    "MSO4": ["eq0", "eq1", "eq3", "eq4"],
+    "MSO5": ["eq0", "eq2", "eq3", "eq4"],
+    "MSOcount": 6
+}
+
+Name: 20
+{
+    "MSO0": ["eq0", "eq1", "eq3"],
+    "MSO1": ["eq1", "eq2", "eq4"],
+    "MSO2": ["eq0", "eq2", "eq3", "eq4"],
+    "MSOcount": 3
+}
+
+Name: 21
+{
+    "MSO0": ["eq0", "eq1", "eq3"],
+    "MSO1": ["eq1", "eq2", "eq4"],
+    "MSOcount": 2
+}
+
+Name: 22
+{
+    "MSO0": ["eq0", "eq1", "eq2"],
+    "MSOcount": 1
+}
+
+Name: 23
+{
+  "MSO0": ["eq0"],
+  "MSOcount": 1
+}
+
+Name: 24
+{
+    "MSO0": ["eq0", "eq1", "eq2"],
+    "MSOcount": 1
+}
+
+Name: 3
+{
+    "MSO0": ["eq2", "eq3", "eq5"],
+    "MSO1": ["eq0", "eq1", "eq4", "eq6"],
+    "MSOcount": 2
+}
+
+Name: 4
+{
+    "MSO0": ["eq2", "eq3", "eq5"],
+    "MSO1": ["eq0", "eq1", "eq4", "eq6"],
+    "MSOcount": 2
+}
+
+Name: 5
+{
+    "MSO0": ["eq2", "eq3", "eq5"],
+    "MSO1": ["eq0", "eq1", "eq4", "eq6"],
+    "MSOcount": 2
+}
+
+Name: 6
+{
+    "MSO0": ["eq0", "eq1", "eq3", "eq4", "eq6"],
+    "MSO1": ["eq1", "eq2", "eq4", "eq5", "eq7"],
+    "MSOcount": 2
+}
+
+Name: 7
+{
+    "MSO0": ["eq4", "eq5"],
+    "MSO1": ["eq0", "eq1", "eq2", "eq3", "eq4"],
+    "MSO2": ["eq0", "eq1", "eq2", "eq3", "eq5"],
+    "MSOcount": 3
+}
+
+Name: 8
+{
+    "MSO0": ["eq2", "eq3", "eq5"],
+    "MSO1": ["eq8", "eq9", "eq10"],
+    "MSO2": ["eq0", "eq1", "eq4", "eq6", "eq8"],
+    "MSOcount": 3
+}
+
+Name: 9
+{
+    "MSO0": ["eq0", "eq1", "eq6", "eq7", "eq12"],
+    "MSO1": ["eq4", "eq5", "eq10", "eq11", "eq14"],
+    "MSO2": ["eq1", "eq2", "eq3", "eq4", "eq8", "eq9", "eq13"],
+    "MSOcount": 3
+}
+
