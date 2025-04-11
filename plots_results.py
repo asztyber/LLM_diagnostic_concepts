@@ -171,13 +171,16 @@ def plot_aggregated_metrics(dfs, save_path):
     markers = ['o', 's', 'D']
     
     name_mapping = {
-        '4o_mini_mso': '4o-mini',
+        'karol_4o_mini_mso': '4o-mini',
+        'karol_o1_mso': 'o1',
+        'karol_o3_mini_mso': 'o3-mini',
+        'maxence_gpt_4o_mini_mso': '4o-mini-gpt',
+        'maxence_o1_mso': 'o1-gpt',
+        'maxence_o3_mini_mso': 'o3-mini-gpt',
         '4o_mini_conflicts': '4o-mini',
         '4o_mini_diagnoses': '4o-mini',
-        'o1_mso': 'o1',
         'o1_conflicts': 'o1',
         'o1_diagnoses': 'o1',
-        'o3_mini_mso': 'o3-mini',
         'o3_mini_conflicts': 'o3-mini',
         'o3_mini_diagnoses': 'o3-mini'
     }
@@ -329,13 +332,16 @@ def plot_aggregated_metrics_by_solutions(dfs, save_path, true_col, x_label):
     
     # Simplified version names mapping
     name_mapping = {
-        '4o_mini_mso': '4o-mini',
+        'karol_4o_mini_mso': '4o-mini',
+        'karol_o1_mso': 'o1',
+        'karol_o3_mini_mso': 'o3-mini',
+        'maxence_gpt_4o_mini_mso': '4o-mini-gpt',
+        'maxence_o1_mso': 'o1-gpt',
+        'maxence_o3_mini_mso': 'o3-mini-gpt',
         '4o_mini_conflicts': '4o-mini',
         '4o_mini_diagnoses': '4o-mini',
-        'o1_mso': 'o1',
         'o1_conflicts': 'o1',
         'o1_diagnoses': 'o1',
-        'o3_mini_mso': 'o3-mini',
         'o3_mini_conflicts': 'o3-mini',
         'o3_mini_diagnoses': 'o3-mini'
     }
@@ -384,78 +390,194 @@ def plot_aggregated_metrics_by_solutions(dfs, save_path, true_col, x_label):
     plt.savefig(save_path, dpi=300, bbox_inches='tight')
     plt.close()
 
-def plot_aggregated_bars(dfs, save_path, title):
-    """Create a bar plot showing aggregated F1, Precision, and Recall scores"""
-    plt.figure(figsize=(8, 4))
+def plot_aggregated_bars_mso(dfs, save_path, title):
+    """Create a bar plot showing aggregated F1, Precision, and Recall scores for MSO results"""
+    plt.figure(figsize=(6, 3))  # Smaller figure
     sns.set_style("whitegrid")
     
-    # Colors for different models
-    colors = ['#2E86C1', '#28B463', '#E74C3C']  # Blue, Green, Red
+    # Store results for each model and method
+    results = {}
     
-    # Width of each bar and positions
-    bar_width = 0.25
-    metrics = ['F1', 'Precision', 'Recall']
-    x = np.arange(len(metrics))
+    # Model mapping
+    model_mapping = {
+        'karol_4o_mini_mso': ('4o-mini', 'Karol'),
+        'karol_o1_mso': ('o1', 'Karol'),
+        'karol_o3_mini_mso': ('o3-mini', 'Karol'),
+        'maxence_gpt_4o_mini_mso': ('4o-mini', 'Maxence'),
+        'maxence_o1_mso': ('o1', 'Maxence'),
+        'maxence_o3_mini_mso': ('o3-mini', 'Maxence')
+    }
     
-    # Calculate aggregated metrics for each model
-    models = ['4o-mini', 'o1', 'o3-mini']
-    results = {model: {'F1': [], 'Precision': [], 'Recall': [], 
-                      'F1_std': [], 'Precision_std': [], 'Recall_std': []} 
-              for model in models}
-    
-    for name, df in dfs.items():
-        model = name.split('_')[0] + '-mini' if 'mini' in name else name.split('_')[0]
+    # Process each model's results
+    for model_name, df in dfs.items():
+        model, method = model_mapping.get(model_name, (model_name, 'Unknown'))
+        if model not in results:
+            results[model] = {'Karol': {}, 'Maxence': {}}
         
-        # Get all metric columns
+        # Get metric columns
         f1_cols = [col for col in df.columns if 'F1' in col]
         precision_cols = [col for col in df.columns if 'Precision' in col]
         recall_cols = [col for col in df.columns if 'Recall' in col]
         
         # Calculate mean and std for each metric
+        results[model][method]['F1'] = df[f1_cols].values.mean()
+        results[model][method]['Precision'] = df[precision_cols].values.mean()
+        results[model][method]['Recall'] = df[recall_cols].values.mean()
+        results[model][method]['F1_std'] = df[f1_cols].values.std()
+        results[model][method]['Precision_std'] = df[precision_cols].values.std()
+        results[model][method]['Recall_std'] = df[recall_cols].values.std()
+    
+    # Setup the plot
+    metrics = ['F1', 'Precision', 'Recall']
+    models = list(results.keys())
+    x = np.arange(len(metrics))
+    width = 0.12  # Slightly narrower bars
+    
+    # Colors for different models
+    colors = {
+        '4o-mini': '#2E86C1',
+        'o1': '#28B463',
+        'o3-mini': '#E74C3C'
+    }
+    
+    # Calculate total width needed for all bars
+    n_models = len(models)
+    total_width = width * 2 * n_models  # 2 bars per model (Karol and Maxence)
+    
+    # Plot bars for each model and method
+    for i, model in enumerate(models):
+        base_offset = (i - n_models/2) * (width * 2.2)
+        
+        # Get values and clip error bars
+        karol_values = [results[model]['Karol'][m] for m in metrics]
+        karol_errors = [results[model]['Karol'][f'{m}_std'] for m in metrics]
+        maxence_values = [results[model]['Maxence'][m] for m in metrics]
+        maxence_errors = [results[model]['Maxence'][f'{m}_std'] for m in metrics]
+        
+        # Clip error bars
+        karol_errors = np.minimum(karol_errors, 
+                                np.minimum(karol_values, np.subtract(1, karol_values)))
+        maxence_errors = np.minimum(maxence_errors, 
+                                  np.minimum(maxence_values, np.subtract(1, maxence_values)))
+        
+        # Plot Karol's results
+        plt.bar(x + base_offset, karol_values,
+                width, label=f'{model} (Karol)',
+                color=colors[model], alpha=0.7)
+        
+        # Plot Maxence's results
+        plt.bar(x + base_offset + width, maxence_values,
+                width, label=f'{model} (Maxence)',
+                color=colors[model], alpha=0.7,
+                hatch='///')
+        
+        # Add error bars
+        plt.errorbar(x + base_offset, karol_values,
+                    yerr=karol_errors,
+                    fmt='none', color='black', capsize=3)
+        plt.errorbar(x + base_offset + width, maxence_values,
+                    yerr=maxence_errors,
+                    fmt='none', color='black', capsize=3)
+    
+    # Customize the plot
+    plt.ylabel('Score', fontsize=12, fontweight='bold')
+    plt.ylim(0, 1.1)  # Changed back to 1.1
+    
+    plt.xticks(x, metrics)
+    
+    # Adjust legend
+    plt.legend(bbox_to_anchor=(0.5, -0.15), loc='upper center', 
+              ncol=3, fontsize=8)  # Smaller font
+    
+    plt.grid(True, linestyle='--', alpha=0.7)
+    plt.tight_layout()
+    
+    # Save the plot
+    plt.savefig(save_path, dpi=300, bbox_inches='tight')
+    plt.close()
+
+def plot_aggregated_bars_other(dfs, save_path, title):
+    """Create a bar plot showing aggregated F1, Precision, and Recall scores for conflicts/diagnoses"""
+    plt.figure(figsize=(6, 3))  # Smaller figure
+    sns.set_style("whitegrid")
+    
+    # Store results for each model
+    results = {}
+    
+    # Model mapping (simplified for conflicts/diagnoses)
+    name_mapping = {
+        '4o_mini_conflicts': '4o-mini',
+        '4o_mini_diagnoses': '4o-mini',
+        'o1_conflicts': 'o1',
+        'o1_diagnoses': 'o1',
+        'o3_mini_conflicts': 'o3-mini',
+        'o3_mini_diagnoses': 'o3-mini'
+    }
+    
+    # Process each model's results
+    for model_name, df in dfs.items():
+        model = name_mapping.get(model_name, model_name)
+        
+        # Get metric columns
+        f1_cols = [col for col in df.columns if 'F1' in col]
+        precision_cols = [col for col in df.columns if 'Precision' in col]
+        recall_cols = [col for col in df.columns if 'Recall' in col]
+        
+        # Calculate mean and std for each metric
+        if model not in results:
+            results[model] = {}
+        
         results[model]['F1'] = df[f1_cols].values.mean()
         results[model]['Precision'] = df[precision_cols].values.mean()
         results[model]['Recall'] = df[recall_cols].values.mean()
-        
         results[model]['F1_std'] = df[f1_cols].values.std()
         results[model]['Precision_std'] = df[precision_cols].values.std()
         results[model]['Recall_std'] = df[recall_cols].values.std()
     
-    # Set y-axis limits first
-    plt.ylim(-0.05, 1.05)
+    # Setup the plot
+    metrics = ['F1', 'Precision', 'Recall']
+    models = list(results.keys())
+    x = np.arange(len(metrics))
+    width = 0.25  # Wider bars since we don't need space for two methods
+    
+    # Colors for different models
+    colors = {
+        '4o-mini': '#2E86C1',
+        'o1': '#28B463',
+        'o3-mini': '#E74C3C'
+    }
     
     # Plot bars for each model
-    for i, (model, color) in enumerate(zip(models, colors)):
-        offset = (i - 1) * bar_width
+    for i, model in enumerate(models):
+        model_offset = (i - 1) * width
+        
+        # Get values and clip error bars
         values = [results[model][m] for m in metrics]
-        errors = [results[model][m + '_std'] for m in metrics]
+        errors = [results[model][f'{m}_std'] for m in metrics]
         
-        # Clip error bars to stay within plot limits
-        errors = [min(e, 1 - v) for e, v in zip(errors, values)]
+        # Clip error bars
+        errors = np.minimum(errors, 
+                          np.minimum(values, np.subtract(1, values)))
         
-        bars = plt.bar(x + offset, values, bar_width,
-                      yerr=errors,
-                      color=color, alpha=0.7,
-                      label=model,
-                      capsize=3,
-                      error_kw={'elinewidth': 1.5})
+        # Plot bars
+        plt.bar(x + model_offset, values,
+                width, label=model,
+                color=colors[model], alpha=0.7)
         
-        # Add annotations at the middle of each bar
-        for j, (v, e) in enumerate(zip(values, errors)):
-            plt.text(x[j] + offset, v/2,  # Position at middle of bar
-                    f'{v:.2f}±{e:.2f}',
-                    ha='center', va='center',
-                    fontsize=8)
+        # Add error bars
+        plt.errorbar(x + model_offset, values,
+                    yerr=errors,
+                    fmt='none', color='black', capsize=3)
     
     # Customize the plot
     plt.ylabel('Score', fontsize=12, fontweight='bold')
+    plt.ylim(0, 1.1)  # Changed back to 1.1
     
-    # Set positions for x-ticks and labels
-    plt.xticks(x, metrics, fontsize=10)
+    plt.xticks(x, metrics)
     
-    # Add legend closer to the plot
-    plt.legend(fontsize=10, loc='upper center',
-              bbox_to_anchor=(0.5, -0.08),  # Moved up from -0.15
-              ncol=3, frameon=True)
+    # Adjust legend
+    plt.legend(bbox_to_anchor=(0.5, -0.15), loc='upper center', 
+              ncol=3, fontsize=8)  # Smaller font
     
     plt.grid(True, linestyle='--', alpha=0.7)
     plt.tight_layout()
@@ -493,7 +615,7 @@ def extract_example_info(content):
 
 def process_examples():
     # Get dataframes from group_dfs
-    mso_df = group_dfs['mso']['4o_mini_mso']
+    mso_df = group_dfs['mso']['karol_4o_mini_mso']
     conflicts_df = group_dfs['conflicts']['4o_mini_conflicts']
     diagnoses_df = group_dfs['diagnoses']['4o_mini_diagnoses']
     
@@ -538,41 +660,66 @@ def process_examples():
     
     return result_df
 
-# Read and process all files
-base_path = 'results/Karol/results_article'
-versions = ['4o_mini', 'o1', 'o3_mini']
+# Update base path and versions configuration
+base_path = 'results'
+versions = {
+    'Karol': {
+        'path': f'{base_path}/Karol/results_article',
+        'versions': ['4o_mini', 'o1', 'o3_mini']
+    },
+    'Maxence': {
+        'path': f'{base_path}/results_DX2025_Maxence',
+        'versions': ['gpt_4o_mini', 'o1', 'o3_mini']
+    }
+}
 
 # Configure file groups with correct column names
 file_groups = {
     'mso': {
-        'files': [f'{base_path}/{ver}/MSO.xlsx' for ver in versions],
-        'names': [f'{ver}_mso' for ver in versions],
+        'files': [],  # Will be populated dynamically
+        'names': [],  # Will be populated dynamically
         'true_col': 'MSO',
         'pred_col': 'Generated MSO'
     },
     'diagnoses': {
-        'files': [f'{base_path}/{ver}/MINIMAL_DIAGNOSES.xlsx' for ver in versions],
-        'names': [f'{ver}_diagnoses' for ver in versions],
+        'files': [f'{versions["Karol"]["path"]}/{ver}/MINIMAL_DIAGNOSES.xlsx' for ver in versions["Karol"]["versions"]],
+        'names': [f'{ver}_diagnoses' for ver in versions["Karol"]["versions"]],
         'true_col': 'Minimal Diagnoses',
         'pred_col': 'Generated  Minimal Diagnoses'  # Note the double space
     },
     'conflicts': {
-        'files': [f'{base_path}/{ver}/MINIMAL_CONFLICTS.xlsx' for ver in versions],
-        'names': [f'{ver}_conflicts' for ver in versions],
+        'files': [f'{versions["Karol"]["path"]}/{ver}/MINIMAL_CONFLICTS.xlsx' for ver in versions["Karol"]["versions"]],
+        'names': [f'{ver}_conflicts' for ver in versions["Karol"]["versions"]],
         'true_col': 'Minimal Conflicts',
         'pred_col': 'Generated  Minimal Conflicts'  # Assuming similar pattern
     }
 }
-# %%
-# Process all files
+
+# Add MSO files from both sources
+for source, config in versions.items():
+    for ver in config['versions']:
+        file_path = f'{config["path"]}/{ver}/MSO.{"csv" if source == "Maxence" else "xlsx"}'
+        file_groups['mso']['files'].append(file_path)
+        file_groups['mso']['names'].append(f'{source.lower()}_{ver}_mso')
+
+def read_file(file_path, skiprows=2):
+    """Read either Excel or CSV file"""
+    if file_path.endswith('.xlsx'):
+        return pd.read_excel(file_path, skiprows=skiprows, usecols='B:BO')
+    else:
+        return pd.read_csv(file_path, sep=';', encoding='utf-8')
+
+# Update the processing code
 group_dfs = defaultdict(dict)
 for group_name, config in file_groups.items():
     for file, name in zip(config['files'], config['names']):
-        df = pd.read_excel(file, skiprows=2, usecols='B:BO')
+        df = read_file(file)
         
         # Fill NaN values in 'Example content' with previous non-empty value
         df['Example content'] = df['Example content'].ffill()
-        df = df.drop(df.index[-1])  # Drop last row from each file
+        
+        if file.endswith('.xlsx'):
+            df = df.drop(df.index[-1])  # Drop last row only for Excel files
         
         # Verify columns exist
         if config['true_col'] not in df.columns:
@@ -585,6 +732,7 @@ for group_name, config in file_groups.items():
             config['true_col'],
             config['pred_col']
         )
+
 # %%
 # Create plots for each group
 for group_name, dfs in group_dfs.items():
@@ -644,13 +792,20 @@ for group_name, dfs in group_dfs.items():
         x_label
     )
 
-# Add these calls after the existing plotting code
+# Update the plotting calls
 for group_name, dfs in group_dfs.items():
-    plot_aggregated_bars(
-        dfs,
-        f'pic/metrics_bars_{group_name}.pdf',
-        f'{group_name.upper()} Generation - Comparison of Metrics Across Models'
-    )
+    if group_name == 'mso':
+        plot_aggregated_bars_mso(
+            dfs,
+            f'pic/metrics_bars_{group_name}.pdf',
+            f'{group_name.upper()} Generation - Comparison of Metrics Across Models'
+        )
+    else:
+        plot_aggregated_bars_other(
+            dfs,
+            f'pic/metrics_bars_{group_name}.pdf',
+            f'{group_name.upper()} Generation - Comparison of Metrics Across Models'
+        )
 
 # %%
 # Create and display the dataframe
@@ -704,3 +859,5 @@ def print_latex_table(df):
 # Call the function with your dataframe
 print_latex_table(examples_df)
 
+
+# %%
