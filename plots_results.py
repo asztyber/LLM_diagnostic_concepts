@@ -533,6 +533,14 @@ def plot_aggregated_bars_other(dfs, save_path, title):
         results[model]['F1_std'] = df[f1_cols].values.std()
         results[model]['Precision_std'] = df[precision_cols].values.std()
         results[model]['Recall_std'] = df[recall_cols].values.std()
+        
+        print(f"\nAggregated Metrics for {title}:")
+        for model, metrics_data in results.items():
+            print(f"  Model: {model}")
+            for metric, value in metrics_data.items():
+                if '_std' not in metric:
+                    std_value = metrics_data.get(f'{metric}_std', 0)
+                    print(f"    {metric}: Mean = {value:.3f}, Std = {std_value:.3f}")
     
     # Setup the plot
     metrics = ['F1', 'Precision', 'Recall']
