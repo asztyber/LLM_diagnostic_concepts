@@ -462,12 +462,12 @@ def plot_aggregated_bars_mso(dfs, save_path, title):
         
         # Plot Karol's results
         plt.bar(x + base_offset, karol_values,
-                width, label=f'{model} (Karol)',
+                width, label=f'{model} (dedicated)',
                 color=colors[model], alpha=0.7)
         
         # Plot Maxence's results
         plt.bar(x + base_offset + width, maxence_values,
-                width, label=f'{model} (Maxence)',
+                width, label=f'{model} (broad)',
                 color=colors[model], alpha=0.7,
                 hatch='///')
         
