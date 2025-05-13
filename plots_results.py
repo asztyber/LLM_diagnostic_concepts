@@ -10,7 +10,6 @@ import re
 # %%
 
 def string_to_sets(mso_string):
-    """Convert MSO string to set of frozensets, handling NaN values"""
     if pd.isna(mso_string):
         return set()
     return {frozenset(s.split(', ')) for s in mso_string.split('\n')}
@@ -108,19 +107,17 @@ def process_metrics_stats(df, f1_columns):
     return f1_means, f1_stds
 
 def plot_metrics(df, title, save_path):
-    """Create a plot showing metrics by example complexity with improved aesthetics"""
+    """Plot showing metrics by example complexity"""
     plt.figure(figsize=(8, 5))
     sns.set_style("whitegrid")
     
-    # Get all F1 columns
     f1_columns = [col for col in df.columns if 'F1' in col]
     f1_means, f1_stds = process_metrics_stats(df, f1_columns)
     
-    # Create the scatter plot with error bars
     plt.errorbar(f1_means.index, f1_means, yerr=f1_stds,
                 fmt='o', capsize=3, capthick=1.5,
                 ecolor='gray', markersize=8,
-                color='#2E86C1',  # Nice blue color
+                color='#2E86C1',
                 alpha=0.7,
                 elinewidth=1.5,
                 markeredgecolor='white',
@@ -134,34 +131,25 @@ def plot_metrics(df, title, save_path):
     plt.plot(x_new, y_new, color='#E74C3C', linestyle='--', 
              alpha=0.8, linewidth=2, label='Trend')
     
-    # Customize the plot
     plt.xlabel('Number of Relations', fontsize=12, fontweight='bold')
     plt.ylabel('F1 Score', fontsize=12, fontweight='bold')
     plt.title(title, fontsize=14, fontweight='bold', pad=20)
-    
-    # Customize grid
     plt.grid(True, linestyle='--', alpha=0.7)
     
-    # Set axis limits with some padding
     plt.ylim(-0.1, 1.2)
     plt.xlim(f1_means.index.min() - 0.5, f1_means.index.max() + 0.5)
     
-    # Customize ticks
     plt.xticks(f1_means.index, fontsize=10)
     plt.yticks(fontsize=10)
     
-    # Add legend
     plt.legend(fontsize=10)
-    
-    # Tight layout
     plt.tight_layout()
     
-    # Save the plot with high DPI
     plt.savefig(save_path, dpi=300, bbox_inches='tight')
     plt.close()
 
 def plot_aggregated_metrics(dfs, save_path):
-    """Create an aggregated plot comparing different versions with improved aesthetics"""
+    """Create an aggregated plot comparing different versions"""
     plt.figure(figsize=(8, 5))
     sns.set_style("whitegrid")
     
@@ -202,7 +190,6 @@ def plot_aggregated_metrics(dfs, save_path):
             f1_means = grouped_stats[f1_columns].xs('mean', axis=1, level=1).mean(axis=1)
             f1_stds = grouped_stats[f1_columns].xs('std', axis=1, level=1).mean(axis=1)
         
-        # Use simplified name for legend
         simple_name = name_mapping.get(name, name)
         
         plt.errorbar(f1_means.index, f1_means, yerr=f1_stds,
@@ -269,14 +256,12 @@ def process_metrics_stats_by_solutions(df, f1_columns, true_col):
 
 def plot_metrics_by_solutions(df, save_path, true_col, x_label):
     """Create a plot showing metrics sorted by number of solutions"""
-    plt.figure(figsize=(8, 5))  # Smaller figure size
+    plt.figure(figsize=(8, 5))
     sns.set_style("whitegrid")
     
-    # Get all F1 columns
     f1_columns = [col for col in df.columns if 'F1' in col]
     f1_means, f1_stds = process_metrics_stats_by_solutions(df, f1_columns, true_col)
     
-    # Create the scatter plot with error bars
     plt.errorbar(f1_means.index, f1_means, yerr=f1_stds,
                 fmt='o', capsize=3, capthick=1.5,
                 ecolor='gray', markersize=8,
@@ -286,7 +271,7 @@ def plot_metrics_by_solutions(df, save_path, true_col, x_label):
                 markeredgecolor='white',
                 markeredgewidth=1.5)
     
-    # Add trend line
+    # Trend line
     z = np.polyfit(f1_means.index, f1_means, 1)
     p = np.poly1d(z)
     x_new = np.linspace(f1_means.index.min(), f1_means.index.max(), 100)
@@ -294,28 +279,20 @@ def plot_metrics_by_solutions(df, save_path, true_col, x_label):
     plt.plot(x_new, y_new, color='#E74C3C', linestyle='--', 
              alpha=0.8, linewidth=2, label='Trend')
     
-    # Customize the plot
     plt.xlabel(x_label, fontsize=12, fontweight='bold')
     plt.ylabel('F1 Score', fontsize=12, fontweight='bold')
     
-    # Customize grid
     plt.grid(True, linestyle='--', alpha=0.7)
     
-    # Set axis limits with some padding
-    plt.ylim(0, 1.0)  # Fixed y-axis range
+    plt.ylim(0, 1.0)
     plt.xlim(f1_means.index.min() - 0.5, f1_means.index.max() + 0.5)
-    
-    # Customize ticks
     plt.xticks(f1_means.index, fontsize=10)
     plt.yticks(fontsize=10)
     
-    # Add legend
     plt.legend(fontsize=10)
     
-    # Tight layout
     plt.tight_layout()
     
-    # Save the plot with high DPI
     plt.savefig(save_path, dpi=300, bbox_inches='tight')
     plt.close()
 
@@ -324,8 +301,7 @@ def plot_aggregated_metrics_by_solutions(dfs, save_path, true_col, x_label):
     plt.figure(figsize=(8, 5))
     sns.set_style("whitegrid")
     
-    # Set y-axis limits with a bit more padding
-    plt.ylim(-0.05, 1.05)  # Changed from (0, 1.0) to show full markers
+    plt.ylim(-0.05, 1.05)
     
     colors = ['#2E86C1', '#28B463', '#E74C3C']
     markers = ['o', 's', 'D']
@@ -392,7 +368,7 @@ def plot_aggregated_metrics_by_solutions(dfs, save_path, true_col, x_label):
 
 def plot_aggregated_bars_mso(dfs, save_path, title):
     """Create a bar plot showing aggregated F1, Precision, and Recall scores for MSO results"""
-    plt.figure(figsize=(6, 3))  # Smaller figure
+    plt.figure(figsize=(6, 3))
     sns.set_style("whitegrid")
     
     # Store results for each model and method
@@ -431,18 +407,15 @@ def plot_aggregated_bars_mso(dfs, save_path, title):
     metrics = ['F1', 'Precision', 'Recall']
     models = list(results.keys())
     x = np.arange(len(metrics))
-    width = 0.12  # Slightly narrower bars
+    width = 0.12
     
-    # Colors for different models
     colors = {
         '4o-mini': '#2E86C1',
         'o1': '#28B463',
         'o3-mini': '#E74C3C'
     }
     
-    # Calculate total width needed for all bars
     n_models = len(models)
-    total_width = width * 2 * n_models  # 2 bars per model (Karol and Maxence)
     
     # Plot bars for each model and method
     for i, model in enumerate(models):
@@ -479,26 +452,24 @@ def plot_aggregated_bars_mso(dfs, save_path, title):
                     yerr=maxence_errors,
                     fmt='none', color='black', capsize=3)
     
-    # Customize the plot
+
     plt.ylabel('Score', fontsize=12, fontweight='bold')
-    plt.ylim(0, 1.1)  # Changed back to 1.1
+    plt.ylim(0, 1.1)
     
     plt.xticks(x, metrics)
     
-    # Adjust legend
     plt.legend(bbox_to_anchor=(0.5, -0.15), loc='upper center', 
               ncol=3, fontsize=8)  # Smaller font
     
     plt.grid(True, linestyle='--', alpha=0.7)
     plt.tight_layout()
     
-    # Save the plot
     plt.savefig(save_path, dpi=300, bbox_inches='tight')
     plt.close()
 
 def plot_aggregated_bars_other(dfs, save_path, title):
     """Create a bar plot showing aggregated F1, Precision, and Recall scores for conflicts/diagnoses"""
-    plt.figure(figsize=(6, 3))  # Smaller figure
+    plt.figure(figsize=(6, 3))
     sns.set_style("whitegrid")
     
     # Store results for each model
@@ -546,9 +517,8 @@ def plot_aggregated_bars_other(dfs, save_path, title):
     metrics = ['F1', 'Precision', 'Recall']
     models = list(results.keys())
     x = np.arange(len(metrics))
-    width = 0.25  # Wider bars since we don't need space for two methods
+    width = 0.25 
     
-    # Colors for different models
     colors = {
         '4o-mini': '#2E86C1',
         'o1': '#28B463',
@@ -577,20 +547,17 @@ def plot_aggregated_bars_other(dfs, save_path, title):
                     yerr=errors,
                     fmt='none', color='black', capsize=3)
     
-    # Customize the plot
     plt.ylabel('Score', fontsize=12, fontweight='bold')
     plt.ylim(0, 1.1)  # Changed back to 1.1
     
     plt.xticks(x, metrics)
     
-    # Adjust legend
     plt.legend(bbox_to_anchor=(0.5, -0.15), loc='upper center', 
               ncol=3, fontsize=8)  # Smaller font
     
     plt.grid(True, linestyle='--', alpha=0.7)
     plt.tight_layout()
     
-    # Save the plot
     plt.savefig(save_path, dpi=300, bbox_inches='tight')
     plt.close()
 
@@ -668,7 +635,6 @@ def process_examples():
     
     return result_df
 
-# Update base path and versions configuration
 base_path = 'results'
 versions = {
     'Karol': {
@@ -681,7 +647,6 @@ versions = {
     }
 }
 
-# Configure file groups with correct column names
 file_groups = {
     'mso': {
         'files': [],  # Will be populated dynamically
@@ -717,7 +682,6 @@ def read_file(file_path, skiprows=2):
     else:
         return pd.read_csv(file_path, sep=';', encoding='utf-8')
 
-# Update the processing code
 group_dfs = defaultdict(dict)
 for group_name, config in file_groups.items():
     for file, name in zip(config['files'], config['names']):
@@ -816,56 +780,5 @@ for group_name, dfs in group_dfs.items():
         )
 
 # %%
-# Create and display the dataframe
 examples_df = process_examples()
 print(examples_df)
-# %%
-
-def print_latex_table(df):
-    """Print dataframe as a LaTeX table with combined ranges for conflicts and diagnoses"""
-    
-    # LaTeX table header
-    print(r"\begin{table}[htbp]")
-    print(r"\centering")
-    print(r"\caption{Example Characteristics}")
-    print(r"\begin{tabular}{lccccccc}")  # Changed to 8 columns (lccccccc)
-    print(r"\toprule")
-    print(r"Example & $|X|$ & $|Z|$ & $|F|$ & Relations & MSOs & Conflicts & Diagnoses \\")
-    print(r"\midrule")
-    
-    # Format each row
-    for _, row in df.iterrows():
-        # Format example name to escape underscores and handle special characters
-        example = row['Example'].replace('_', r'\_')
-        
-        # Format conflicts range
-        conflicts = f"{int(row['Min_conflicts'])}--{int(row['Max_conflicts'])}" \
-            if row['Min_conflicts'] != row['Max_conflicts'] \
-            else f"{int(row['Min_conflicts'])}"
-            
-        # Format diagnoses range
-        diagnoses = f"{int(row['Min_diagnoses'])}--{int(row['Max_diagnoses'])}" \
-            if row['Min_diagnoses'] != row['Max_diagnoses'] \
-            else f"{int(row['Min_diagnoses'])}"
-        
-        # Print formatted row
-        print(f"{example} & "
-              f"{int(row['X_vars'])} & "
-              f"{int(row['Z_vars'])} & "
-              f"{int(row['F_vars'])} & "
-              f"{int(row['Relations'])} & "
-              f"{int(row['MSO_count'])} & "
-              f"{conflicts} & "
-              f"{diagnoses} \\\\")
-    
-    # LaTeX table footer
-    print(r"\bottomrule")
-    print(r"\end{tabular}")
-    print(r"\label{tab:example-characteristics}")
-    print(r"\end{table}")
-
-# Call the function with your dataframe
-print_latex_table(examples_df)
-
-
-# %%

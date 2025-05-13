@@ -18,20 +18,17 @@ def read_examples_from_file(filepath):
         for line in file:
             line = line.strip()
             if line.startswith("Name: "):
-                # If we have a previous example, save it
                 if current_name is not None:
                     try:
                         examples[current_name] = json.loads(current_content)
                     except json.JSONDecodeError:
                         print(f"Error parsing JSON for example {current_name}")
                 
-                # Start new example
                 current_name = line.split("Name: ")[1]
                 current_content = ""
             elif line and not line.isspace() and current_name is not None:
                 current_content += line
                 
-    # Don't forget to add the last example
     if current_name is not None and current_content:
         try:
             examples[current_name] = json.loads(current_content)
@@ -125,10 +122,8 @@ for model_name, results_dir in folders.items():
         file_name = os.path.basename(result_file)
         print(f"Processing {file_name}")
         
-        # Read the examples from this file
         examples = read_examples_from_file(result_file)
         
-        # Process all examples from 2 to 24
         file_results = {}
         
         for example_num in range(2, 25):
@@ -197,7 +192,6 @@ for model_name, file_results in sorted(all_model_results.items()):
         print(f"{model_name:8s} | {file_name[:30]:30s} | {avg['accuracy']:8.2f} | {avg['precision']:9.2f} | {avg['recall']:6.2f} | {avg['f1']:.2f}")
         model_avgs.append(avg)
     
-    # Calculate and print average for this model
     if model_avgs:
         model_final_avg = {
             'accuracy': sum(avg['accuracy'] for avg in model_avgs) / len(model_avgs),
@@ -208,9 +202,6 @@ for model_name, file_results in sorted(all_model_results.items()):
         print("-" * 100)
         print(f"{model_name:8s} | {'AVERAGE':30s} | {model_final_avg['accuracy']:8.2f} | {model_final_avg['precision']:9.2f} | {model_final_avg['recall']:6.2f} | {model_final_avg['f1']:.2f}")
 
-#%%
-# Store full results
-all_model_results
 
 # %%
 def plot_model_results(all_model_results, save_path='pic/im_bars.pdf'):
@@ -289,11 +280,9 @@ def plot_model_results(all_model_results, save_path='pic/im_bars.pdf'):
                     ha='center', va='center',
                     fontsize=8)
     
-    # Customize the plot
     plt.ylabel('Score', fontsize=12)
     plt.xticks(x, metrics, fontsize=10)
     
-    # Add legend
     plt.legend(fontsize=10, loc='upper center',
               bbox_to_anchor=(0.5, -0.08),
               ncol=3, frameon=True)
@@ -306,7 +295,6 @@ def plot_model_results(all_model_results, save_path='pic/im_bars.pdf'):
     plt.close()
 
 #%%
-# Create the plot
 plot_model_results(all_model_results)
 
 # %%
